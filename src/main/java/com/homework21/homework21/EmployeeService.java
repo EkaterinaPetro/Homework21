@@ -1,5 +1,6 @@
 package com.homework21.homework21;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -9,16 +10,22 @@ public class EmployeeService {
     private Map<String, Employee> employees = new HashMap<>();
 
     public Employee addEmployee(String firstName, String lastName) {
+        checkInput(firstName, lastName);
+
         if (employees.containsKey(firstName + " " + lastName)) {
             throw new EmployeeAlreadyAddedException();
         }
+
         Employee employee = new Employee(firstName, lastName);
         employees.put(firstName + " " + lastName, employee);
         System.out.println("Сотрудник добавлен");
+
         return employee;
     }
 
     public Employee deleteEmployee(String firstName, String lastName) {
+        checkInput(firstName, lastName);
+
         if (employees.containsKey(firstName + " " + lastName)) {
             Employee employee = employees.get(firstName + " " + lastName);
             employees.remove(firstName + " " + lastName);
@@ -28,7 +35,10 @@ public class EmployeeService {
 
         throw new EmployeeNotFoundException();
     }
+
     public Employee findEmployee(String firstName, String lastName) {
+        checkInput(firstName, lastName);
+
         if (employees.containsKey(firstName + " " + lastName)) {
             Employee employee = employees.get(firstName + " " + lastName);
             return employee;
@@ -39,5 +49,11 @@ public class EmployeeService {
 
     public List<Employee> printEmployees() {
         return new ArrayList<>(employees.values());
+    }
+
+    public void checkInput(String firstName, String lastName) {
+        if (!(StringUtils.isAlpha(firstName) && StringUtils.isAlpha(lastName))) {
+            throw new InvalidInputException();
+        }
     }
 }
